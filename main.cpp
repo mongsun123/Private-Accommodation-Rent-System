@@ -21,3 +21,18 @@ struct Node {
     Node* prev;
     Node* next;
 };
+
+class CircularDoublyLinkedList {
+    Node* head;
+
+public:
+    CircularDoublyLinkedList() {
+        head = NULL;
+    }
+
+    void addData(int ads_id, std::string prop_name, int completion_year, std::string monthly_rent, std::string location, std::string property_type, std::string rooms, int parking, int bathroom, std::string size, std::string furnished, std::string facilities, std::string additional_facilities, std::string region);
+    void displayData();
+    void sortData();
+    Node* searchData(int ads_id);
+    void deleteData(int ads_id);
+};
