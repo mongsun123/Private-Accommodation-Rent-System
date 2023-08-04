@@ -12,19 +12,19 @@ struct TenantFavList {
 	string Prop_Name;
 	double Size;
 	double Monthly_Rent;
-    string Completion_year; 
-    string Location;
-    string Property_Type;
-    double Rooms;
-    double Parking; 
-    double Bathroom;
-    string Furnished;
-    string Facilities;
-    string Additional_facilities;
-    string Region;
+	string Completion_year; 
+	string Location;
+	string Property_Type;
+	double Rooms;
+	double Parking; 
+	double Bathroom;
+	string Furnished;
+	string Facilities;
+	string Additional_facilities;
+	string Region;
 	TenantFavList* back;
-	TenantFavList* next;
-};
+	TenantFavList* next;	
+	};
 
 int main() {
     string Tenant_Id = "tp01";
@@ -32,6 +32,7 @@ int main() {
     TenantFavList* newEntry = new TenantFavList;
     vector<TenantFavList> properties;
 
+    //ifstream to input file
     ifstream theFile("C:/Users/User/Desktop/Degree Year 2 Sem 2/Data Structure/mudah-apartment-kl-selangor.csv");
     if (!theFile.is_open()) {
         cout << "Error opening the file." << endl;
@@ -39,14 +40,14 @@ int main() {
     }
 
     string line;
-    getline(theFile, line); // Skip the header line (if it exists)
+    getline(theFile, line); // read the line of text and store it in line
     while (getline(theFile, line)) {
         TenantFavList newEntry;
         stringstream ss(line);
         getline(ss, newEntry.Ads_Id, ',');
         getline(ss, newEntry.Prop_Name, ',');
         getline(ss, newEntry.Property_Type, ',');
-        properties.push_back(newEntry);
+        properties.push_back(newEntry); //save the data into properties vector
     }
     theFile.close();
 
@@ -56,6 +57,8 @@ int main() {
 
         // Search for the favorite property in the vector
         bool propertyFound = false;
+
+	// Access properties of the TenantFavList object using the property reference (pointer)
         for (const auto& property : properties) {
             if (property.Ads_Id == newEntry->Ads_Id) {
                 // Property found, save it as favorite
