@@ -10,4 +10,12 @@ next
 prev
 
 Min Wei - Tenant (1.4,1.5), Manager (2.6,2.7)
+___Tenant Struct___ for 1.4
+string Tenant_Id:
+string Tenant_Name:
+string Ads_Id:
+string Prop_Name:
+int Size:
+string monthly_Rent:
+
 Ze Wen - Manager (2.2-2.5)
