@@ -2,28 +2,28 @@
 #include <string>
 using namespace std;
 
-struct Node {
-    int ads_id; // ads_id
+struct Property {
+    string ads_id; // ads_id
     string prop_name;
-    int completion_year; // assuming NaN values are represented as -1
-    string monthly_rent;
+    string completion_year; // assuming NaN values are represented as -1
+    double monthly_rent;
     string location;
     string property_type;
-    string rooms;
+    int rooms;
     int parking; // assuming NaN values are represented as -1
     int bathroom; // assuming NaN values are represented as -1
-    tring size;
+    double size;
     string furnished;
     string facilities;
     string additional_facilities;
     string region;
 
-    Node* prev;
-    Node* next;
+    Property* prev;
+    Property* next;
 };
 
 class CircularDoublyLinkedList {
-    Node* head;
+    Property* head;
 
 public:
     CircularDoublyLinkedList() {
