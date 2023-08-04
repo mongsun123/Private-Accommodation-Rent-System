@@ -3,7 +3,7 @@
 using namespace std;
 
 struct Node {
-    int ads_id;
+    int ads_id; // ads_id
     string prop_name;
     int completion_year; // assuming NaN values are represented as -1
     string monthly_rent;
