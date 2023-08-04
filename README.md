@@ -1,4 +1,4 @@
-# C-algorithm
+# Private Accommodation Rent System
 HELLO THIS IS OUR DATA STRUCTURE ASSIGNMENT <br />
 
 GROUP MEMBER1: TEO ZE WEN<br />
