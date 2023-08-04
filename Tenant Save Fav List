@@ -1,0 +1,79 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct TenantFavList {
+	string Tenant_Id;
+	string Tenant_Name;
+	string Ads_Id;
+	string Prop_Name;
+	double Size;
+	double Monthly_Rent;
+    string Completion_year; 
+    string Location;
+    string Property_Type;
+    double Rooms;
+    double Parking; 
+    double Bathroom;
+    string Furnished;
+    string Facilities;
+    string Additional_facilities;
+    string Region;
+	TenantFavList* back;
+	TenantFavList* next;
+};
+
+int main() {
+    string Tenant_Id = "tp01";
+    string Tenant_Name = "Lim";
+    TenantFavList* newEntry = new TenantFavList;
+    vector<TenantFavList> properties;
+
+    ifstream theFile("C:/Users/User/Desktop/Degree Year 2 Sem 2/Data Structure/mudah-apartment-kl-selangor.csv");
+    if (!theFile.is_open()) {
+        cout << "Error opening the file." << endl;
+        return 1;
+    }
+
+    string line;
+    getline(theFile, line); // Skip the header line (if it exists)
+    while (getline(theFile, line)) {
+        TenantFavList newEntry;
+        stringstream ss(line);
+        getline(ss, newEntry.Ads_Id, ',');
+        getline(ss, newEntry.Prop_Name, ',');
+        getline(ss, newEntry.Property_Type, ',');
+        properties.push_back(newEntry);
+    }
+    theFile.close();
+
+    if (Tenant_Id == "tp01") {
+        cout << "Enter Ads Id to select property: ";
+        cin >> newEntry->Ads_Id;
+
+        // Search for the favorite property in the vector
+        bool propertyFound = false;
+        for (const auto& property : properties) {
+            if (property.Ads_Id == newEntry->Ads_Id) {
+                // Property found, save it as favorite
+                *newEntry = property;
+                propertyFound = true;
+                break;
+            }
+        }if (propertyFound) {
+            cout << "Favorite property saved: " << endl;
+            cout << "Ads_Id: " << newEntry->Ads_Id << endl;
+            cout << "Prop_Name: " << newEntry->Prop_Name << endl;
+            cout << "Completion_year: " << newEntry->Property_Type << endl;
+        }
+        else {
+            cout << "Property with Ads_Id " << newEntry->Ads_Id << " not found." << endl;
+        }
+    }
+    else {
+        cout << "Wrong User";
+    }
+}
