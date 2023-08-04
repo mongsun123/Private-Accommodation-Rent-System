@@ -6,7 +6,8 @@ string User_Name:
 string User_Email:
 string User_Role:
 string User_Status:
-
+next 
+prev
 
 Min Wei - Tenant (1.4,1.5), Manager (2.6,2.7)
 Ze Wen - Manager (2.2-2.5)
