@@ -22,16 +22,17 @@ struct TenantFavList {
 	string Facilities;
 	string Additional_facilities;
 	string Region;
-	string Payment_Status;
+    	string Payment_Status;
 	TenantFavList* back;
-	TenantFavList* next;	
-	};
+	TenantFavList* next;
+};
 
 int main() {
     string Tenant_Id = "tp01";
     string Tenant_Name = "Lim";
-    TenantFavList* newEntry = new TenantFavList;
+    TenantFavList* tenantFav = new TenantFavList;
     vector<TenantFavList> properties;
+    vector<TenantFavList> favorites;
 
     //ifstream to input file
     ifstream theFile("C:/Users/User/Desktop/Degree Year 2 Sem 2/Data Structure/mudah-apartment-kl-selangor.csv");
@@ -41,43 +42,82 @@ int main() {
     }
 
     string line;
-    getline(theFile, line); // read the line of text and store it in line
+    getline(theFile, line); // Skip the header line (if it exists)
     while (getline(theFile, line)) {
-        TenantFavList newEntry;
+        TenantFavList tenantFav;
         stringstream ss(line);
-        getline(ss, newEntry.Ads_Id, ',');
-        getline(ss, newEntry.Prop_Name, ',');
-        getline(ss, newEntry.Property_Type, ',');
-        properties.push_back(newEntry); //save the data into properties vector
+        getline(ss, tenantFav.Ads_Id, ',');
+        getline(ss, tenantFav.Prop_Name, ',');
+        getline(ss, tenantFav.Property_Type, ',');
+        tenantFav.Payment_Status = "Pending";
+        properties.push_back(tenantFav);
     }
     theFile.close();
 
     if (Tenant_Id == "tp01") {
-        cout << "Enter Ads Id to select property: ";
-        cin >> newEntry->Ads_Id;
-
-        // Search for the favorite property in the vector
-        bool propertyFound = false;
-
-	// Access properties of the TenantFavList object using the property reference (pointer)
-        for (const auto& property : properties) {
-            if (property.Ads_Id == newEntry->Ads_Id) {
-                // Property found, save it as favorite
-                *newEntry = property;
-                propertyFound = true;
+        int choice;
+        
+        while (true) {
+            cout << "Enter 1 to save property, 2 to place rent request for favorite list, 5 to exit: ";
+            cin >> choice;
+            if (choice == 5) {
+                cout << "Program exit";
                 break;
             }
-        }if (propertyFound) {
-            cout << "Favorite property saved: " << endl;
-            cout << "Ads_Id: " << newEntry->Ads_Id << endl;
-            cout << "Prop_Name: " << newEntry->Prop_Name << endl;
-            cout << "Completion_year: " << newEntry->Property_Type << endl;
-        }
-        else {
-            cout << "Property with Ads_Id " << newEntry->Ads_Id << " not found." << endl;
+            else if (choice == 1) {
+                cout << "Enter Ads Id to select property: ";
+                cin >> tenantFav->Ads_Id;
+                // Search for the favorite property in the vector
+                bool propertyFound = false;
+
+                for (int i = 0; i < properties.size(); i++) {
+                    TenantFavList& property = properties[i];
+                    if (property.Ads_Id == tenantFav->Ads_Id) {
+                        // Property found, save it as favorite
+                        *tenantFav = property;
+                        favorites.push_back(property);
+                        propertyFound = true;
+                        break;
+                    }
+                }if (propertyFound) {
+                    cout << "Favorite property saved: " << endl;
+                    cout << "Ads_Id: " << tenantFav->Ads_Id << endl;
+                    cout << "Prop_Name: " << tenantFav->Prop_Name << endl;
+                    cout << "Completion_year: " << tenantFav->Property_Type << endl<< endl;
+
+                }
+                else {
+                    cout << "Property with Ads_Id " << tenantFav->Ads_Id << " not found." << endl << endl;
+
+                }
+            }
+            else if (choice == 2) {
+                string adsIdToRent;
+                cout << "Enter Ads Id of the property from favorite list to rent: ";
+                cin >> adsIdToRent;
+                bool propertyFound = false;
+                
+                for (int i = 0; i < favorites.size(); i ++) { // not const, since we might modify the property
+                    TenantFavList& property = favorites[i];
+                    if (property.Ads_Id == adsIdToRent) {
+                        // Property found in favorites, update its status and display a message
+                        property.Payment_Status = "Requested";
+                        cout << "Rent request has been placed for property: " << endl;
+                        cout << "Ads Id: " << property.Ads_Id << endl;
+                        cout << "Prop Name: " << property.Prop_Name << endl;
+                        cout << "Completion year: " << property.Property_Type << endl;
+                        cout << "Payment Status: " << property.Payment_Status << endl <<endl;
+                        propertyFound = true;
+                        break;
+                    }
+                }
+                if (!propertyFound) {
+                    cout << "Property with Ads_Id " << adsIdToRent << " not found in your favorites." << endl << endl;
+                }
+            }
         }
     }
-    else {
-        cout << "Wrong User";
+     else {
+        cout << "Wrong User" << endl;
     }
 }
