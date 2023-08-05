@@ -15,8 +15,7 @@ struct User {
 };
 
 // Function to add a new user to the linked list
-void addUser(User*& head, const string& userId, const string& password, const string& name,
-    const string& email, const string& role, const string& status) {
+void addUser(User** head, string userId, string password, string name, string email, string role, string status) {
     // Create a new user struct
     User* newUser = new User;
     newUser->User_Id = userId;
@@ -58,7 +57,7 @@ void displayUsers(User* head) {
         temp = temp->next;
     }
 }
-void deleteUserById(User*& head, const string& userId) {
+void deleteUserById(User* head, string userId) {
     User* temp = head;
     while (temp != nullptr) {
         if (temp->User_Id == userId) {
@@ -86,7 +85,7 @@ void deleteUserById(User*& head, const string& userId) {
 }
 
 // Function to delete all users and free memory to prevent memory leaks
-void deleteAllUsers(User*& head) {
+void deleteAllUsers(User* head) {
     while (head != nullptr) {
         User* temp = head;
         head = head->next;
@@ -96,12 +95,13 @@ void deleteAllUsers(User*& head) {
 
 
 int main() {
-    User* userList = nullptr;
+    User* userList = new User;
+    userList = nullptr;
 
     // Example usage:
-    addUser(userList, "u123", "password123", "John Doe", "john@example.com", "Regular", "Active");
-    addUser(userList, "u456", "securepass", "Jane Smith", "jane@example.com", "Admin", "Active");
-    addUser(userList, "u789", "12345678", "Bob Johnson", "bob@example.com", "Regular", "Inactive");
+    addUser(&userList, "u123", "password123", "John Doe", "john@example.com", "Regular", "Active");
+    addUser(&userList, "u456", "securepass", "Jane Smith", "jane@example.com", "Admin", "Active");
+    addUser(&userList, "u789", "12345678", "Bob Johnson", "bob@example.com", "Regular", "Inactive");
 
     cout << "Before deletion:" << endl;
     displayUsers(userList);
