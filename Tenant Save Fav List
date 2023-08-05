@@ -6,23 +6,23 @@
 using namespace std;
 
 struct TenantFavList {
-	string Tenant_Id;
-	string Tenant_Name;
+	string User_Id;
+	string User_Name;
 	string Ads_Id;
 	string Prop_Name;
 	double Size;
 	double Monthly_Rent;
-	string Completion_year; 
-	string Location;
-	string Property_Type;
-	double Rooms;
-	double Parking; 
-	double Bathroom;
-	string Furnished;
-	string Facilities;
-	string Additional_facilities;
-	string Region;
-	string Payment_Status;
+    string Completion_year; 
+    string Location;
+    string Property_Type;
+    double Rooms;
+    double Parking; 
+    double Bathroom;
+    string Furnished;
+    string Facilities;
+    string Additional_facilities;
+    string Region;
+    string Payment_Status;
 	TenantFavList* back;
 	TenantFavList* next;
 };
@@ -113,8 +113,8 @@ void Add_To_Rent_From_Fav(vector<TenantFavList>& favorites) {
 }
 
 int main() {
-    string Tenant_Id = "tp01";
-    string Tenant_Name = "Lim";
+    string User_Id = "tp01";
+    string User_Name = "Lim";
     TenantFavList* tenantFav = new TenantFavList;
     vector<TenantFavList> properties;
     vector<TenantFavList> favorites;
@@ -139,7 +139,7 @@ int main() {
     }
     theFile.close();
 
-    if (Tenant_Id == "tp01") {
+    if (User_Id == "tp01") {
         int choice;
         while (true) {
             cout << "Enter 1 to save property, 2 to place rent request for favorite list, 5 to exit: ";
@@ -161,3 +161,4 @@ int main() {
         }
     }
 }
+  
