@@ -1,0 +1,119 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct User {
+    string User_Id;
+    string User_Password;
+    string User_Name;
+    string User_Email;
+    string User_Role;
+    string User_Status;
+    User* next;s
+    User* prev;
+
+};
+
+// Function to add a new user to the linked list
+void addUser(User*& head, const string& userId, const string& password, const string& name,
+    const string& email, const string& role, const string& status) {
+    // Create a new user struct
+    User* newUser = new User;
+    newUser->User_Id = userId;
+    newUser->User_Password = password;
+    newUser->User_Name = name;
+    newUser->User_Email = email;
+    newUser->User_Role = role;
+    newUser->User_Status = status;
+    newUser->next = nullptr;
+
+    // Check if the list is empty
+    if (head == nullptr) {
+        head = newUser;
+        newUser->prev = nullptr;
+        return;
+    }
+
+    // Find the last user in the list
+    User* temp = head;
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+
+    // Add the new user to the end of the list
+    temp->next = newUser;
+    newUser->prev = temp;
+}
+
+// Function to display all users in the linked list
+void displayUsers(User* head) {
+    User* temp = head;
+    while (temp != nullptr) {
+        cout << "User ID: " << temp->User_Id << endl;
+        cout << "Name: " << temp->User_Name << endl;
+        cout << "Email: " << temp->User_Email << endl;
+        cout << "Role: " << temp->User_Role << endl;
+        cout << "Status: " << temp->User_Status << endl;
+        cout << "----------------------" << endl;
+        temp = temp->next;
+    }
+}
+void deleteUserById(User*& head, const string& userId) {
+    User* temp = head;
+    while (temp != nullptr) {
+        if (temp->User_Id == userId) {
+            // Adjust the previous node's next pointer
+            if (temp->prev != nullptr) {
+                temp->prev->next = temp->next;
+            }
+            else {
+                // If the user to be deleted is the head node
+                head = temp->next;
+            }
+
+            // Adjust the next node's previous pointer
+            if (temp->next != nullptr) {
+                temp->next->prev = temp->prev;
+            }
+
+            // Free the memory occupied by the user
+            delete temp;
+            return;
+        }
+        temp = temp->next;
+    }
+    cout << "User with ID " << userId << " not found." << endl;
+}
+
+// Function to delete all users and free memory to prevent memory leaks
+void deleteAllUsers(User*& head) {
+    while (head != nullptr) {
+        User* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+
+int main() {
+    User* userList = nullptr;
+
+    // Example usage:
+    addUser(userList, "u123", "password123", "John Doe", "john@example.com", "Regular", "Active");
+    addUser(userList, "u456", "securepass", "Jane Smith", "jane@example.com", "Admin", "Active");
+    addUser(userList, "u789", "12345678", "Bob Johnson", "bob@example.com", "Regular", "Inactive");
+
+    cout << "Before deletion:" << endl;
+    displayUsers(userList);
+
+    // Example usage of deleting a specific user by User_Id
+    deleteUserById(userList, "u456");
+
+    cout << "After deletion:" << endl;
+    displayUsers(userList);
+
+    // Don't forget to free the memory after you're done using the linked list
+    deleteAllUsers(userList);
+
+    return 0;
+}
