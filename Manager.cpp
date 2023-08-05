@@ -62,6 +62,19 @@ void displayAllTenant(User* head) {
     }
 }
 
+void displayAllInactiveTenant(User* head) {
+    int no = 1;
+    cout << "Tenant Inactive Account" << endl;
+    User* temp = head;
+    while (temp != nullptr) {
+        if (temp->User_Role == "Tenant") {
+            cout << no << ". User ID: " << temp->User_Id << endl;
+            no++;
+        }
+        temp = temp->next;
+    }
+}
+
 bool searchTenant(User* head, string uid) {
     User* temp = head;
     while (temp != nullptr) {
@@ -80,10 +93,10 @@ bool searchTenant(User* head, string uid) {
     return false;
 }
 
-void deleteTenantByStatus(User* head, string userId) {
+bool deleteTenantByStatus(User* head, string userId) {
     User* temp = head;
     while (temp != nullptr) {
-        if (temp->User_Id == userId) {
+        if (temp->User_Id == userId && temp->User_Status == "Inactive" && temp->User_Role == "Tenant") {
             // Adjust the previous node's next pointer
             if (temp->prev != nullptr) {
                 temp->prev->next = temp->next;
@@ -100,14 +113,14 @@ void deleteTenantByStatus(User* head, string userId) {
 
             //Delete the user
             delete temp;
-            return;
+            return true;
         }
         temp = temp->next;
     }
-    cout << "User with ID " << userId << " not found." << endl;
+    return false;
 }
 
-//Test
+/*
 void deleteTenantByStatus2(User* head, string action) {
     User* tempNext = nullptr; // Used for storing next node of the linked list prior deletion
     User* temp = head;
@@ -138,7 +151,7 @@ void deleteTenantByStatus2(User* head, string action) {
             }
             else if (action == "p") {
                 if (temp != nullptr) {
-                   // temp = temp->prev;
+                    temp = temp->prev;
                 }
                 else {
                     temp = lastNode;
@@ -179,7 +192,7 @@ void deleteTenantByStatus2(User* head, string action) {
             temp = temp->next;
         }
     }
-}
+}*/
 
 int main() {
     User* userList = new User;
@@ -213,14 +226,22 @@ int main() {
             displayAllTenant(userList);
             break;
         case 2:
-            cout << "Search the tenant's username: ";
+            cout << "Search the tenant's user ID: ";
             cin >> uid;
             if (!searchTenant(userList, uid)) {
                 cout << "Record not found!" << endl;
             }
             break;
         case 3:
-            deleteTenantByStatus2(userList,action);
+            displayAllInactiveTenant(userList);
+            cout << "Delete the tenant's inactive account using user ID: ";
+            cin >> uid;
+            if (!deleteTenantByStatus(userList, uid)) {
+                cout << "Account not found!" << endl;
+            }
+            else {
+                cout << "Account is deleted successfully!" << endl;
+            }
             break;
         case 4:
             //generateTopPropertyReport();
