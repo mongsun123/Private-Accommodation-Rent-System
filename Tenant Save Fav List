@@ -48,7 +48,6 @@ int main() {
         getline(ss, newEntry.Ads_Id, ',');
         getline(ss, newEntry.Prop_Name, ',');
         getline(ss, newEntry.Property_Type, ',');
-	newEntry.Payment_Status = "Pending";
         properties.push_back(newEntry); //save the data into properties vector
     }
     theFile.close();
@@ -73,7 +72,6 @@ int main() {
             cout << "Ads_Id: " << newEntry->Ads_Id << endl;
             cout << "Prop_Name: " << newEntry->Prop_Name << endl;
             cout << "Completion_year: " << newEntry->Property_Type << endl;
-	    cout << "Payment Status: " << newEntry->Payment_Status << endl;
         }
         else {
             cout << "Property with Ads_Id " << newEntry->Ads_Id << " not found." << endl;
