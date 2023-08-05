@@ -181,16 +181,6 @@ void deleteTenantByStatus2(User* head, string action) {
     }
 }
 
-// Function to delete all users and free memory to prevent memory leaks
-void deleteAllUsers(User* head) {
-    while (head != nullptr) {
-        User* temp = head;
-        head = head->next;
-        delete temp;
-    }
-}
-
-
 int main() {
     User* userList = new User;
     userList = nullptr;
