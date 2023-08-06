@@ -13,6 +13,9 @@ struct User {
     User* prev;
 };
 
+// For User Login
+string loggedUserId = "";
+
 // Function to add a new user to the linked list
 void addUser(User** head, string User_Id, string User_Password, string User_Name, string User_Email, string User_Role, string User_Status) {
     // Create a new user struct
@@ -92,12 +95,15 @@ bool login(User* head, string User_Id, string User_Password) {
     while (temp != nullptr) {
         if (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Tenant") {
             cout << "Login Successful!" << endl;
+            loggedUserId = User_Id; // Set the logged-in user's User_Id
             return true;
         }elseif (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Manager") {
             cout << "Login Successful!" << endl;
+            loggedUserId = User_Id; // Set the logged-in user's User_Id
             return true;
         }elseif (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Admin") {
             cout << "Login Successful!" << endl;
+            loggedUserId = User_Id; // Set the logged-in user's User_Id
             return true;
         }
         temp = temp->next;
@@ -105,6 +111,16 @@ bool login(User* head, string User_Id, string User_Password) {
 
     cout << "Login Failed. Invalid credentials or user not active." << endl;
     return false;
+}
+
+void logout() {
+    if (loggedUserId.empty()) {
+        cout << "No user is currently logged in." << endl;
+    }
+    else {
+        cout << "Logged out user: " << loggedUserId << endl;
+        loggedUserId = ""; // Reset the logged-in user's User_Id
+    }
 }
 
 bool changeUserStatus(User* head, string User_Id, string User_Status) {
@@ -140,6 +156,7 @@ int main() {
     cin >> user_password_input;
 
     login(user_id_input, user_password_input);
+    logout();
 
     cout << "Before deletion:" << endl;
     displayUsers(head);
