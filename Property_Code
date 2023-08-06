@@ -1,0 +1,138 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+struct Property {
+    int ads_id;
+    string prop_name;
+    string completion_year;
+    string monthly_rent;
+    string location;
+    string property_type;
+    string rooms;
+    string parking;
+    string bathroom;
+    string size;
+    string furnished;
+    vector<string> facilities;
+    vector<string> additional_facilities;
+    string region;
+};
+
+vector<string> split(const string& s, char delimiter) {
+    vector<string> tokens;
+    string token;
+    istringstream tokenStream(s);
+    while (getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+vector<Property> read_csv(string filename) {
+    ifstream file(filename);
+    vector<Property> properties;
+    string line, word;
+    getline(file, line); // Skip the header line
+
+    while (getline(file, line)) {
+        stringstream s(line);
+        Property property;
+        int column_index = 0;
+        while (getline(s, word, ',')) {
+            if (word[0] == '"') {
+                // This field is enclosed in double quotes, which means it may contain commas.
+                // We keep reading from the stringstream until we find the closing double quote.
+                while (word.back() != '"' || word.size() < 2) {
+                    string extra_word;
+                    getline(s, extra_word, ',');
+                    word += "," + extra_word;
+                }
+                // Remove the double quotes from the field.
+                word = word.substr(1, word.size() - 2);
+            }
+
+            switch (column_index) {
+            case 0:
+                property.ads_id = stoi(word);
+                break;
+            case 1:
+                property.prop_name = word;
+                break;
+            case 2:
+                property.completion_year = word;
+                break;
+            case 3:
+                property.monthly_rent = word;
+                break;
+            case 4:
+                property.location = word;
+                break;
+            case 5:
+                property.property_type = word;
+                break;
+            case 6:
+                property.rooms = word;
+                break;
+            case 7:
+                property.parking = word;
+                break;
+            case 8:
+                property.bathroom = word;
+                break;
+            case 9:
+                property.size = word;
+                break;
+            case 10:
+                property.furnished = word;
+                break;
+            case 11:
+                property.facilities = split(word, ',');
+                break;
+            case 12:
+                property.additional_facilities = split(word, ',');
+                break;
+            case 13:
+                property.region = word;
+                break;
+            }
+            column_index++;
+        }
+        properties.push_back(property);
+    }
+    return properties;
+}
+
+int main() {
+    vector<Property> properties = read_csv("C:/Users/Sniper Ulti/Downloads/mudah-apartment-kl-selangor.csv");
+    int count = 0;
+    for (Property property : properties) {
+        if (count >= 5) break;
+        cout << "Property ID: " << property.ads_id << endl
+            << "Property Name: " << property.prop_name << endl
+            << "Completion Year: " << property.completion_year << endl
+            << "Monthly Rent: " << property.monthly_rent << endl
+            << "Location: " << property.location << endl
+            << "Property Type: " << property.property_type << endl
+            << "Rooms: " << property.rooms << endl
+            << "Parking: " << property.parking << endl
+            << "Bathroom: " << property.bathroom << endl
+            << "Size: " << property.size << endl
+            << "Furnished: " << property.furnished << endl
+            << "Facilities: ";
+        for (string facility : property.facilities) {
+            cout << facility << ", ";
+        }
+        cout << endl << "Additional Facilities: ";
+        for (string additional_facility : property.additional_facilities) {
+            cout << additional_facility << ", ";
+        }
+        cout << endl << "Region: " << property.region << endl << endl;
+        count++;
+    }
+    return 0;
+}
