@@ -90,7 +90,13 @@ void deleteAllUsers(User* head) {
 bool login(User* head, string User_Id, string User_Password) {
     User* temp = head;
     while (temp != nullptr) {
-        if (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active") {
+        if (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Tenant") {
+            cout << "Login Successful!" << endl;
+            return true;
+        }elseif (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Manager") {
+            cout << "Login Successful!" << endl;
+            return true;
+        }elseif (temp->User_Id == User_Id && temp->User_Password == User_Password && temp->User_Status == "Active" && temp->User_Role == "Admin") {
             cout << "Login Successful!" << endl;
             return true;
         }
@@ -120,10 +126,20 @@ int main() {
     User* head = new User;
     head = nullptr;
 
+    string user_id_input;
+    string user_password_input;
+    
     // Example usage:
     addUser(&head, "u123", "password123", "John Doe", "john@example.com", "Tenant", "Active");
     addUser(&head, "u456", "securepass", "Jane Smith", "june@example.com", "Admin", "Active");
     addUser(&head, "u789", "12345678", "Bob Johnson", "bob@example.com", "Manager", "Inactive");
+    
+    cout << "Enter Username: ";
+    cin >> user_id_input;
+    cout << "Enter Password: ";
+    cin >> user_password_input;
+
+    login(user_id_input, user_password_input);
 
     cout << "Before deletion:" << endl;
     displayUsers(head);
