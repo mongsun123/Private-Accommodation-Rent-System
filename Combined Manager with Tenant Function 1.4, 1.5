@@ -145,6 +145,124 @@ bool deleteTenantByStatus(User* head, string userId) {
     return false;
 }
 
+void manageTenancyProcess(vector<TenantFavList>& favorites) {
+    cout << "Properties with requested status:" << endl;
+    bool pendingPropertiesExist = false;
+    for (int i = 0; i < favorites.size(); i++) {
+        if (favorites[i].Payment_Status == "Requested") {
+            pendingPropertiesExist = true;
+            cout << "----------------------" << endl;
+            cout << "Ads Id: " << favorites[i].Ads_Id << endl;
+            cout << "Prop Name: " << favorites[i].Prop_Name << endl;
+            cout << "Completion year: " << favorites[i].Property_Type << endl;
+            cout << "Payment Status: " << favorites[i].Payment_Status << endl << endl;
+        }
+    }
+
+    if (!pendingPropertiesExist) {
+        cout << "No properties are currently in requested status." << endl;
+        return;
+    }
+
+    cout << "Enter Ads Id to process rent request: ";
+    string adsIdToProcess;
+    cin >> adsIdToProcess;
+
+    // Find the property with the given Ads Id
+    bool propertyFound = false;
+    for (int i = 0; i < favorites.size(); i++) {
+        TenantFavList& property = favorites[i];
+        if (property.Ads_Id == adsIdToProcess && property.Payment_Status == "Requested") {
+            cout << "Rent request received for property: " << endl;
+            cout << "Ads Id: " << property.Ads_Id << endl;
+            cout << "Prop Name: " << property.Prop_Name << endl;
+            cout << "Completion year: " << property.Property_Type << endl;
+            cout << "Payment Status: " << property.Payment_Status << endl << endl;
+
+            cout << "Do you want to approve or deny the request? (Enter 'approve' or 'deny'): ";
+            string response;
+            cin >> response;
+
+            if (response == "approve") {
+                property.Payment_Status = "Approved";
+                cout << "Rent request approved." << endl;
+            }
+            else if (response == "deny") {
+                property.Payment_Status = "Denied";
+                cout << "Rent request denied." << endl;
+            }
+            else {
+                cout << "Invalid response. Please try again." << endl;
+            }
+
+            cout << "New payment status: " << property.Payment_Status << endl << endl;
+            propertyFound = true;
+            break;
+        }
+    }
+
+    if (!propertyFound) {
+        cout << "Property with Ads_Id " << adsIdToProcess << " not found or has no rent request." << endl << endl;
+    }
+}
+
+void managePayment(vector<TenantFavList>& favorites) {
+    cout << "Properties with approved status:" << endl;
+    bool approvedPropertiesExist = false;
+    for (int i = 0; i < favorites.size(); i++) {
+        if (favorites[i].Payment_Status == "Approved") {
+            approvedPropertiesExist = true;
+            cout << "----------------------" << endl;
+            cout << "Ads Id: " << favorites[i].Ads_Id << endl;
+            cout << "Prop Name: " << favorites[i].Prop_Name << endl;
+            cout << "Completion year: " << favorites[i].Property_Type << endl;
+            cout << "Payment Status: " << favorites[i].Payment_Status << endl << endl;
+        }
+    }
+
+    if (!approvedPropertiesExist) {
+        cout << "No properties are currently in approved status." << endl;
+        return;
+    }
+
+    cout << "Enter Ads Id to process payment: ";
+    string adsIdToProcess;
+    cin >> adsIdToProcess;
+
+    // Find the property with the given Ads Id
+    bool propertyFound = false;
+    for (int i = 0; i < favorites.size(); i++) {
+        TenantFavList& property = favorites[i];
+        if (property.Ads_Id == adsIdToProcess && property.Payment_Status == "Approved") {
+            cout << "Property approved for rent: " << endl;
+            cout << "Ads Id: " << property.Ads_Id << endl;
+            cout << "Prop Name: " << property.Prop_Name << endl;
+            cout << "Completion year: " << property.Property_Type << endl;
+            cout << "Payment Status: " << property.Payment_Status << endl << endl;
+
+            //cout << "Enter the payment amount: ";
+            //double paymentAmount;
+            //cin >> paymentAmount;
+
+            // Here you can add any payment logic as per your requirements
+
+            // For now we just change the status to Paid
+            property.Payment_Status = "Paid";
+
+            cout << "Payment received. New payment status: " << property.Payment_Status << endl << endl;
+            propertyFound = true;
+            break;
+        }
+    }
+
+    if (!propertyFound) {
+        cout << "Property with Ads_Id " << adsIdToProcess << " not found or has no rent approval." << endl << endl;
+    }
+}
+
+
+
+
 void Save_Favorite_Property(vector<TenantFavList>& properties, vector<TenantFavList>& favorites, TenantFavList* tenantFav) {
     cout << "Enter Ads Id to select property: ";
     cin >> tenantFav->Ads_Id;
@@ -259,6 +377,7 @@ int main() {
         properties.push_back(tenantFav);
     }
     theFile.close();
+
     cout << "Welcome Manager To PRIVATE ACCOMMODATION RENT SYSTEM" << endl;
     // Example usage:
     addUser(&userList, "x123", "password123", "John Doe", "john@example.com", "Admin", "Inactive");
@@ -266,86 +385,100 @@ int main() {
     addUser(&userList, "x345", "password123", "Franky Dane", "john@example.com", "Admin", "Inactive");
     addUser(&userList, "u456", "securepass", "Jane Smith", "jane@example.com", "Tenant", "Active");
     addUser(&userList, "u789", "12345678", "Bob Johnson", "bob@example.com", "Tenant", "Inactive");
-    cout << "Enter username: " << endl;
-    cin >> login;
-    if (login == "x123") {
-        do {
+    while(true){
+        cout << "Enter username: " << endl;
+        cin >> login;
+        if (login == "x123") {
+            do {
 
-            cout << "--------------------------------------------------------" << endl;
-            cout << "Main Menu" << endl;
-            cout << "1. Display all registered tenants' details" << endl;
-            cout << "2. Search tenant's details" << endl;
-            cout << "3. Delete tenant accounts based on inactivity status" << endl;
-            cout << "4. Generate top 10 property report" << endl;
-            cout << "5. Manage tenancy process upon renting request received" << endl;
-            cout << "6. Manage payment of the confirmed tenancy" << endl;
-            cout << "7. Logout" << endl;
-            cout << "--------------------------------------------------------" << endl;
-            cout << "Enter your choice: ";
-            cin >> choice;
+                cout << "--------------------------------------------------------" << endl;
+                cout << "Main Menu" << endl;
+                cout << "1. Display all registered tenants' details" << endl;
+                cout << "2. Search tenant's details" << endl;
+                cout << "3. Delete tenant accounts based on inactivity status" << endl;
+                cout << "4. Generate top 10 property report" << endl;
+                cout << "5. Manage tenancy process upon renting request received" << endl;
+                cout << "6. Manage payment of the confirmed tenancy" << endl;
+                cout << "7. Logout" << endl;
+                cout << "--------------------------------------------------------" << endl;
+                cout << "Enter your choice: ";
+                cin >> choice;
 
-            switch (choice) {
-            case 1:
-                displayAllTenant(userList);
-                break;
-            case 2:
-                cout << "Search the tenant's user ID: ";
-                cin >> uid;
-                if (!searchTenant(userList, uid)) {
-                    cout << "Record not found!" << endl;
+                switch (choice) {
+                case 1:
+                    displayAllTenant(userList);
+                    break;
+                case 2:
+                    cout << "Search the tenant's user ID: ";
+                    cin >> uid;
+                    if (!searchTenant(userList, uid)) {
+                        cout << "Record not found!" << endl;
+                    }
+                    break;
+                case 3:
+                    displayAllInactiveTenant(userList);
+                    cout << "Delete the tenant's inactive account using user ID: ";
+                    cin >> uid;
+                    if (!deleteTenantByStatus(userList, uid)) {
+                        cout << "Account not found!" << endl;
+                    }
+                    else {
+                        cout << "Account is deleted successfully!" << endl;
+                    }
+                    break;
+                case 4:
+                    //generateTopPropertyReport();
+                    break;
+                case 5:
+                    manageTenancyProcess(favorites);
+                    break;
+                case 6:
+                     managePayment(favorites);
+                    break;
+                case 7:
+                    cout << "Logging out the system. Thank You!" << endl;
+                    break;
+                default:
+                    cout << "Invalid choice. Please enter a valid option." << endl;
+                    break;
                 }
-                break;
-            case 3:
-                displayAllInactiveTenant(userList);
-                cout << "Delete the tenant's inactive account using user ID: ";
-                cin >> uid;
-                if (!deleteTenantByStatus(userList, uid)) {
-                    cout << "Account not found!" << endl;
+            } while (choice != 7);
+        }
+        else if (login == "u123") {
+            while (true) {
+                cout << "--------------------------------------------------------" << endl;
+                cout << "Main Menu" << endl;
+                cout << "1.Save Property" << endl;
+                cout << "2. Place Rent Request" << endl;
+                cout << "3. Logout" << endl;
+                cout << "Enter your choice: ";
+                cin >> tenant_choice;
+                if (tenant_choice == 3) {
+                    cout << "Program exit" << endl;
+                    break;
+                }
+                else if (tenant_choice == 1) {
+                    Save_Favorite_Property(properties, favorites, tenantFav);
+                }
+                else if (tenant_choice == 2) {
+                    Display_Fav_List(favorites);
+                    string choice;
+                    cout << "Enter 'yes' to continue, 'no' to back" << endl;
+                    cin >> choice;
+                    if(choice == "yes"){
+                    Add_To_Rent_From_Fav(favorites);
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                else if (tenant_choice == 3) {
+                    cout << "Logout";
+                    break;
                 }
                 else {
-                    cout << "Account is deleted successfully!" << endl;
+                    cout << "Wrong User" << endl;
                 }
-                break;
-            case 4:
-                //generateTopPropertyReport();
-                break;
-            case 5:
-                //manageTenancyProcess();
-                break;
-            case 6:
-                // managePayment();
-                break;
-            case 7:
-                cout << "Logging out the system. Thank You!" << endl;
-                break;
-            default:
-                cout << "Invalid choice. Please enter a valid option." << endl;
-                break;
-            }
-        } while (choice != 7);
-    }
-    else if (login == "u123") {
-        while (true) {
-            cout << "--------------------------------------------------------" << endl;
-            cout << "Main Menu" << endl;
-            cout << "1.Save Property" << endl;
-            cout << "2. Place Rent Request" << endl;
-            cout << "3. Exit" << endl;
-            cout << "Enter your choice: ";
-            cin >> tenant_choice;
-            if (tenant_choice == 3) {
-                cout << "Program exit";
-                break;
-            }
-            else if (tenant_choice == 1) {
-                Save_Favorite_Property(properties, favorites, tenantFav);
-            }
-            else if (tenant_choice == 2) {
-                Display_Fav_List(favorites);
-                Add_To_Rent_From_Fav(favorites);
-            }
-            else {
-                cout << "Wrong User" << endl;
             }
         }
     }
