@@ -6,7 +6,7 @@
 
 using namespace std;
 
-struct Property {
+struct property {
     int ads_id;
     string prop_name;
     string completion_year;
@@ -21,118 +21,211 @@ struct Property {
     vector<string> facilities;
     vector<string> additional_facilities;
     string region;
+    property* next;
+    property* prev;
 };
 
 vector<string> split(const string& s, char delimiter) {
     vector<string> tokens;
     string token;
-    istringstream tokenStream(s);
-    while (getline(tokenStream, token, delimiter)) {
+    istringstream tokenstream(s);
+    while (getline(tokenstream, token, delimiter)) {
         tokens.push_back(token);
     }
     return tokens;
 }
 
-vector<Property> read_csv(string filename) {
+property* read_csv(string filename) {
     ifstream file(filename);
-    vector<Property> properties;
     string line, word;
-    getline(file, line); // Skip the header line
+    getline(file, line); // skip the header line
+
+    property* head = nullptr;
 
     while (getline(file, line)) {
         stringstream s(line);
-        Property property;
+        int ads_id;
+        string prop_name, completion_year, monthly_rent, location, property_type, rooms, parking, bathroom, size, furnished, region;
+        vector<string> facilities, additional_facilities;
         int column_index = 0;
+
         while (getline(s, word, ',')) {
             if (word[0] == '"') {
-                // This field is enclosed in double quotes, which means it may contain commas.
-                // We keep reading from the stringstream until we find the closing double quote.
                 while (word.back() != '"' || word.size() < 2) {
                     string extra_word;
                     getline(s, extra_word, ',');
                     word += "," + extra_word;
                 }
-                // Remove the double quotes from the field.
                 word = word.substr(1, word.size() - 2);
             }
 
             switch (column_index) {
             case 0:
-                property.ads_id = stoi(word);
+                ads_id = stoi(word);
                 break;
             case 1:
-                property.prop_name = word;
+                prop_name = word;
                 break;
             case 2:
-                property.completion_year = word;
+                completion_year = word;
                 break;
             case 3:
-                property.monthly_rent = word;
+                monthly_rent = word;
                 break;
             case 4:
-                property.location = word;
+                location = word;
                 break;
             case 5:
-                property.property_type = word;
+                property_type = word;
                 break;
             case 6:
-                property.rooms = word;
+                rooms = word;
                 break;
             case 7:
-                property.parking = word;
+                parking = word;
                 break;
             case 8:
-                property.bathroom = word;
+                bathroom = word;
                 break;
             case 9:
-                property.size = word;
+                size = word;
                 break;
             case 10:
-                property.furnished = word;
+                furnished = word;
                 break;
             case 11:
-                property.facilities = split(word, ',');
+                facilities = split(word, ',');
                 break;
             case 12:
-                property.additional_facilities = split(word, ',');
+                additional_facilities = split(word, ',');
                 break;
             case 13:
-                property.region = word;
+                region = word;
                 break;
             }
             column_index++;
         }
-        properties.push_back(property);
+
+         //create a new property struct
+        property* newproperty = new property;
+        newproperty->ads_id = ads_id;
+        newproperty->prop_name = prop_name;
+        newproperty->completion_year = completion_year;
+        newproperty->monthly_rent = monthly_rent;
+        newproperty->location = location;
+        newproperty->property_type = property_type;
+        newproperty->rooms = rooms;
+        newproperty->parking = parking;
+        newproperty->bathroom = bathroom;
+        newproperty->size = size;
+        newproperty->furnished = furnished;
+        newproperty->facilities = facilities;
+        newproperty->additional_facilities = additional_facilities;
+        newproperty->region = region;
+        newproperty->next = nullptr;
+
+         //check if the list is empty
+        if (head == nullptr) {          
+            head = newproperty;
+            newproperty->prev = nullptr;
+        }
+        else {
+             //find the last property in the list
+            property* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+
+            // add the new property to the end of the list
+            temp->next = newproperty;
+            newproperty->prev = temp;
+        }
     }
-    return properties;
+    return head;
+}
+
+void printproperties(property* head) {
+    string action;
+    int count = 0;
+    property* temp = head;
+    property* lastnode = head;
+    while (lastnode->next != nullptr) {
+        lastnode = lastnode->next;
+    }
+    while (temp != nullptr && count<5) {
+            cout << "--------------------------------------------------------" << endl;
+            cout << "property id: " << temp->ads_id << endl
+                << "property name: " << temp->prop_name << endl
+                << "completion year: " << temp->completion_year << endl
+                << "monthly rent: " << temp->monthly_rent << endl
+                << "location: " << temp->location << endl
+                << "property type: " << temp->property_type << endl
+                << "rooms: " << temp->rooms << endl
+                << "parking: " << temp->parking << endl
+                << "bathroom: " << temp->bathroom << endl
+                << "size: " << temp->size << endl
+                << "furnished: " << temp->furnished << endl
+                << "facilities: ";
+            for (string facility : temp->facilities) {
+                cout << facility << ", " ;
+            }
+            cout << endl;
+            cout << "additional facilities: ";
+            for (string additional_facility : temp->additional_facilities) {
+                cout << additional_facility << ", ";
+            }
+            cout << endl;    
+            cout << "region: " << temp->region << endl;
+            cout << "--------------------------------------------------------" << endl;
+            if (action == "") {
+                count++;
+                if (count != 5) {
+                    temp = temp->next;
+                }
+            }else if (action == "n" && count<5){
+                count++;
+                if (count != 5) {
+                    temp = temp->next;
+                }
+            }else if (action == "p" && count<5) {
+                count++;
+                if (count != 5) {
+                    temp = temp->prev;
+                    if (temp == nullptr) {
+                        temp = lastnode; //circular
+                    }
+                }
+            }
+ 
+        if (count == 5) {
+            cout << "press n for next, p for prev, d for delete, other key for exit: ";
+            cin >> action;
+            if (action == "n") {
+                if (temp->next != nullptr) {
+                    temp = temp->next;
+                    count = 0;
+                }
+                else {
+                    count = 0;
+                    temp = head; // circular
+                }
+            }
+            else if (action == "p") {
+                if (temp->prev != nullptr) {
+                    temp = temp->prev;
+                    count = 0;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        
+    }
 }
 
 int main() {
-    vector<Property> properties = read_csv("C:/Users/Sniper Ulti/Downloads/mudah-apartment-kl-selangor.csv");
-    int count = 0;
-    for (Property property : properties) {
-        if (count >= 5) break;
-        cout << "Property ID: " << property.ads_id << endl
-            << "Property Name: " << property.prop_name << endl
-            << "Completion Year: " << property.completion_year << endl
-            << "Monthly Rent: " << property.monthly_rent << endl
-            << "Location: " << property.location << endl
-            << "Property Type: " << property.property_type << endl
-            << "Rooms: " << property.rooms << endl
-            << "Parking: " << property.parking << endl
-            << "Bathroom: " << property.bathroom << endl
-            << "Size: " << property.size << endl
-            << "Furnished: " << property.furnished << endl
-            << "Facilities: ";
-        for (string facility : property.facilities) {
-            cout << facility << ", ";
-        }
-        cout << endl << "Additional Facilities: ";
-        for (string additional_facility : property.additional_facilities) {
-            cout << additional_facility << ", ";
-        }
-        cout << endl << "Region: " << property.region << endl << endl;
-        count++;
-    }
+    property* properties = read_csv("c:/users/user/desktop/mudah-apartment-kl-selangor.csv");
+    printproperties(properties);
     return 0;
 }
