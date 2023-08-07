@@ -1,7 +1,7 @@
-#include <iostream>;
-#include <string>;
-#include "../Header Files/property.h";
-#include "../Header Files/user.h";
+#include <iostream>
+#include <string>
+#include "../Header Files/property.h"
+#include "../Header Files/user.h"
 
 using namespace std;
 
