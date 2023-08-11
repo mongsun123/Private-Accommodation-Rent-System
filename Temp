@@ -1,16 +1,36 @@
-bool changeUserStatus(User* head, string User_Id, string User_Status) {
+
+void displayTenantForAdmin(User* head) {
     User* temp = head;
+    while (temp->prev != nullptr) {
+        temp = temp->prev;
+    }
+    string choice;
+    cout << "Press 1 for view ACTIVE user, Press 2 for view INACTIVE user : ";
+    cin >> choice;
+    cout << "1 ";
     while (temp != nullptr) {
-        if (temp->User_Id == User_Id) {
-            temp->User_Status = User_Status;
-            cout << "User Status Changed Successfully." << endl;
-            return true;
+        cout << "2 ";
+        if (temp->User_Role == "Tenant") {
+            cout << "3 ";
+            if (choice == "1" && temp->User_Status == "Active") {
+                cout << "User ID: " << temp->User_Id << endl;
+                cout << "Name: " << temp->User_Name << endl;
+                cout << "Email: " << temp->User_Email << endl;
+                cout << "Role: " << temp->User_Role << endl;
+                cout << "Status: " << temp->User_Status << endl;
+                cout << "----------------------" << endl;
+            }
+            else if(choice == "2" && temp->User_Status == "Inactive") {
+                cout << "User ID: " << temp->User_Id << endl;
+                cout << "Name: " << temp->User_Name << endl;
+                cout << "Email: " << temp->User_Email << endl;
+                cout << "Role: " << temp->User_Role << endl;
+                cout << "Status: " << temp->User_Status << endl;
+                cout << "----------------------" << endl;
+            }
         }
         temp = temp->next;
     }
-
-    cout << "User with ID " << User_Id << " not found." << endl;
-    return false;
 }
 
 void adminDashboard(User* user_head) {
