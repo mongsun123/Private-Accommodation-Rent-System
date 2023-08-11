@@ -1,0 +1,436 @@
+bool changeUserStatus(User* head, string User_Id, string User_Status) {
+    User* temp = head;
+    while (temp != nullptr) {
+        if (temp->User_Id == User_Id) {
+            temp->User_Status = User_Status;
+            cout << "User Status Changed Successfully." << endl;
+            return true;
+        }
+        temp = temp->next;
+    }
+
+    cout << "User with ID " << User_Id << " not found." << endl;
+    return false;
+}
+
+void adminDashboard(User* user_head) {
+	string choice;
+
+	while (true){
+		User* temp = user_head;
+		while (temp->prev != nullptr) {
+			temp = temp->prev;
+		}
+		cout << "-------------ADMIN DASHBOARD-------------" << endl;
+		cout << "1. Add Manager User " << endl;
+		cout << "2. Change User Status (Active and Inactive) " << endl;
+		cout << "3. Display Tenants" << endl;
+		cout << "4. Display Property" << endl;
+		cout << "5. Logout" << endl;
+		cout << "Enter your choice: ";
+		cin >> choice;
+		if (choice == "1") {
+			string user_manager_id, user_manager_password, user_manager_name, user_manager_email;
+			cout << "Enter Manager ID: ";
+			cin >> user_manager_id;
+			cout << "Enter Manager Password: ";
+			cin >> user_manager_password;
+			cout << "Enter Manager Name: ";
+			cin >> user_manager_name;
+			cout << "Enter Manager Email: ";
+			cin >> user_manager_email;
+			while (temp != nullptr) {
+				if (temp->User_Id == user_manager_id || temp->User_Email == user_manager_email) {
+					cout << "Unsuccessfully. The user ID or Email already been taken!" << endl;
+					break;
+				}
+				else if (temp->next == nullptr && temp->User_Id != user_manager_id && temp->User_Email != user_manager_email) {
+					addUser(&user_head, user_manager_id, user_manager_password, user_manager_name, user_manager_email, "Admin", "Active");
+					cout << "Add manager successfully!" << endl;
+					break;
+				}
+				temp = temp->next;
+			}
+		}
+		else if (choice == "2") {
+			string user_id_status_input, user_status_status_input;
+			displayUsers(user_head);
+			cout << "Which user you want to change the status?: ";
+			cin >> user_id_status_input;
+			cout << "You want change to? (Active or Inactive): ";
+			cin >> user_status_status_input;
+			if (changeUserStatus(user_head, user_id_status_input, user_status_status_input) == true) {
+				cout << "Change Successfully" << endl << endl;
+			}
+			/*else{
+				cout << "Wrong User ID" << endl << endl;
+			}*/
+		}
+		else if (choice == "3") {
+			displayTenantForAdmin(user_head);
+		}
+		else if (choice == "4") {
+			Property* properties = read_csv("C:/Users/Sniper Ulti/Downloads/mudah-apartment-kl-selangor.csv");
+			printPropertiesForFilter(properties);
+		}
+		else if (choice == "5") {
+			logout();
+			break;
+		}
+		else {
+			cout << "Wrong Input" << endl;
+		}
+	}
+}
+
+
+void printPropertiesForFilter(Property* head) {
+    string action;
+    int count = 0;
+    Property* temp = head;
+    Property* last_node = head;
+    string choice, num_room, property_location, property_furnished;
+    cout << "--------------------------------------------------------" << endl;
+    cout << "Which section you want filter?" << endl;
+    cout << "1. Number of Room" << endl;
+    cout << "2. Location" << endl;
+    cout << "3. Furnished" << endl;
+    cout << "4. Normal Display" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    while (last_node->next != nullptr) {
+        last_node = last_node->next;
+    }
+    if (choice == "1") {
+        cout << "How many room number you want search: ";
+        cin >> num_room;
+        while (temp != nullptr && count < 5) {
+            if (temp->rooms == num_room) {
+                cout << "--------------------------------------------------------" << endl;
+                cout << "property id: " << temp->ads_id << endl
+                    << "property name: " << temp->prop_name << endl
+                    << "completion year: " << temp->completion_year << endl
+                    << "monthly rent: " << temp->monthly_rent << endl
+                    << "location: " << temp->location << endl
+                    << "property type: " << temp->property_type << endl
+                    << "rooms: " << temp->rooms << endl
+                    << "parking: " << temp->parking << endl
+                    << "bathroom: " << temp->bathroom << endl
+                    << "size: " << temp->size << endl
+                    << "furnished: " << temp->furnished << endl
+                    << "facilities: ";
+                for (string facility : temp->facilities) {
+                    cout << facility << ", ";
+                }
+                cout << endl;
+                cout << "additional facilities: ";
+                for (string additional_facility : temp->additional_facilities) {
+                    cout << additional_facility << ", ";
+                }
+                cout << endl;
+                cout << "region: " << temp->region << endl;
+                cout << "--------------------------------------------------------" << endl;
+                if (action == "") {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "n" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "p" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->prev;
+                        if (temp == nullptr) {
+                            temp = last_node; //circular
+                        }
+                    }
+                }
+
+                if (count == 5) {
+                    cout << "press n for next, p for prev, d for delete, other key for exit: ";
+                    cin >> action;
+                    if (action == "n") {
+                        if (temp->next != nullptr) {
+                            temp = temp->next;
+                            count = 0;
+                        }
+                        else {
+                            count = 0;
+                            temp = head; // circular
+                        }
+                    }
+                    else if (action == "p") {
+                        if (temp->prev != nullptr) {
+                            temp = temp->prev;
+                            count = 0;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else if (action == "p") {
+                temp = temp->prev;
+            }
+            else {
+                temp = temp->next;
+            }
+        }
+    }
+    else if (choice == "2") {
+        cout << "What is the location you want search: ";
+        cin >> property_location;
+        while (temp != nullptr && count < 5) {
+            if (temp->location == property_location) {
+                cout << "--------------------------------------------------------" << endl;
+                cout << "property id: " << temp->ads_id << endl
+                    << "property name: " << temp->prop_name << endl
+                    << "completion year: " << temp->completion_year << endl
+                    << "monthly rent: " << temp->monthly_rent << endl
+                    << "location: " << temp->location << endl
+                    << "property type: " << temp->property_type << endl
+                    << "rooms: " << temp->rooms << endl
+                    << "parking: " << temp->parking << endl
+                    << "bathroom: " << temp->bathroom << endl
+                    << "size: " << temp->size << endl
+                    << "furnished: " << temp->furnished << endl
+                    << "facilities: ";
+                for (string facility : temp->facilities) {
+                    cout << facility << ", ";
+                }
+                cout << endl;
+                cout << "additional facilities: ";
+                for (string additional_facility : temp->additional_facilities) {
+                    cout << additional_facility << ", ";
+                }
+                cout << endl;
+                cout << "region: " << temp->region << endl;
+                cout << "--------------------------------------------------------" << endl;
+                if (action == "") {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "n" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "p" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->prev;
+                        if (temp == nullptr) {
+                            temp = last_node; //circular
+                        }
+                    }
+                }
+
+                if (count == 5) {
+                    cout << "press n for next, p for prev, d for delete, other key for exit: ";
+                    cin >> action;
+                    if (action == "n") {
+                        if (temp->next != nullptr) {
+                            temp = temp->next;
+                            count = 0;
+                        }
+                        else {
+                            count = 0;
+                            temp = head; // circular
+                        }
+                    }
+                    else if (action == "p") {
+                        if (temp->prev != nullptr) {
+                            temp = temp->prev;
+                            count = 0;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else if (action == "p") {
+                temp = temp->prev;
+            }
+            else {
+                temp = temp->next;
+            }
+        }
+    }
+    else if (choice == "3") {
+        cout << "Which furnished you want to search? (1. Fully, 2. Partially, or 3. Not Furnished): ";
+        cin >> property_furnished;
+
+        if (property_furnished == "1") {
+            property_furnished = "Fully Furnished";
+        }else if (property_furnished == "2") {
+            property_furnished = "Partially Furnished";
+        }
+        else if (property_furnished == "3") {
+            property_furnished = "Not Furnished";
+        }
+
+        while (temp != nullptr && count < 5) {
+            if (temp->furnished == property_furnished) {
+                cout << "--------------------------------------------------------" << endl;
+                cout << "property id: " << temp->ads_id << endl
+                    << "property name: " << temp->prop_name << endl
+                    << "completion year: " << temp->completion_year << endl
+                    << "monthly rent: " << temp->monthly_rent << endl
+                    << "location: " << temp->location << endl
+                    << "property type: " << temp->property_type << endl
+                    << "rooms: " << temp->rooms << endl
+                    << "parking: " << temp->parking << endl
+                    << "bathroom: " << temp->bathroom << endl
+                    << "size: " << temp->size << endl
+                    << "furnished: " << temp->furnished << endl
+                    << "facilities: ";
+                for (string facility : temp->facilities) {
+                    cout << facility << ", ";
+                }
+                cout << endl;
+                cout << "additional facilities: ";
+                for (string additional_facility : temp->additional_facilities) {
+                    cout << additional_facility << ", ";
+                }
+                cout << endl;
+                cout << "region: " << temp->region << endl;
+                cout << "--------------------------------------------------------" << endl;
+                if (action == "") {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "n" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->next;
+                    }
+                }
+                else if (action == "p" && count < 5) {
+                    count++;
+                    if (count != 5) {
+                        temp = temp->prev;
+                        if (temp == nullptr) {
+                            temp = last_node; //circular
+                        }
+                    }
+                }
+
+                if (count == 5) {
+                    cout << "press n for next, p for prev, d for delete, other key for exit: ";
+                    cin >> action;
+                    if (action == "n") {
+                        if (temp->next != nullptr) {
+                            temp = temp->next;
+                            count = 0;
+                        }
+                        else {
+                            count = 0;
+                            temp = head; // circular
+                        }
+                    }
+                    else if (action == "p") {
+                        if (temp->prev != nullptr) {
+                            temp = temp->prev;
+                            count = 0;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            else if (action == "p") {
+                temp = temp->prev;
+            }
+            else {
+                temp = temp->next;
+            }
+        }
+    }
+    else if (choice == "4") {
+        while (temp != nullptr && count < 5) {
+            cout << "--------------------------------------------------------" << endl;
+            cout << "property id: " << temp->ads_id << endl
+                << "property name: " << temp->prop_name << endl
+                << "completion year: " << temp->completion_year << endl
+                << "monthly rent: " << temp->monthly_rent << endl
+                << "location: " << temp->location << endl
+                << "property type: " << temp->property_type << endl
+                << "rooms: " << temp->rooms << endl
+                << "parking: " << temp->parking << endl
+                << "bathroom: " << temp->bathroom << endl
+                << "size: " << temp->size << endl
+                << "furnished: " << temp->furnished << endl
+                << "facilities: ";
+            for (string facility : temp->facilities) {
+                cout << facility << ", ";
+            }
+            cout << endl;
+            cout << "additional facilities: ";
+            for (string additional_facility : temp->additional_facilities) {
+                cout << additional_facility << ", ";
+            }
+            cout << endl;
+            cout << "region: " << temp->region << endl;
+            cout << "--------------------------------------------------------" << endl;
+            if (action == "") {
+                count++;
+                if (count != 5) {
+                    temp = temp->next;
+                }
+            }
+            else if (action == "n" && count < 5) {
+                count++;
+                if (count != 5) {
+                    temp = temp->next;
+                }
+            }
+            else if (action == "p" && count < 5) {
+                count++;
+                if (count != 5) {
+                    temp = temp->prev;
+                    if (temp == nullptr) {
+                        temp = last_node; //circular
+                    }
+                }
+            }
+
+            if (count == 5) {
+                cout << "press n for next, p for prev, d for delete, other key for exit: ";
+                cin >> action;
+                if (action == "n") {
+                    if (temp->next != nullptr) {
+                        temp = temp->next;
+                        count = 0;
+                    }
+                    else {
+                        count = 0;
+                        temp = head; // circular
+                    }
+                }
+                else if (action == "p") {
+                    if (temp->prev != nullptr) {
+                        temp = temp->prev;
+                        count = 0;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    }
+}
