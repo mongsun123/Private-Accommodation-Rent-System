@@ -31,6 +31,6 @@ Kindly view the system documentation for more information.
 
 # Contributors
 MEMBER1: OPvoli<br />
-GROUP MEMBER2: mongsun123<br />
-GROUP MEMBER3: gumball0087<br />
+MEMBER2: mongsun123<br />
+MEMBER3: gumball0087<br />
 
